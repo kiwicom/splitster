@@ -1,6 +1,6 @@
 import * as R from "ramda";
 
-const defaultConfig = {
+export const defaultConfig = {
   tests: {},
   options: {
     cookies: {
@@ -11,7 +11,7 @@ const defaultConfig = {
   }
 };
 
-const defaultTestConfig = {
+export const defaultTestConfig = {
   description: "",
   userGroup: {},
   userGroupExclude: {},
