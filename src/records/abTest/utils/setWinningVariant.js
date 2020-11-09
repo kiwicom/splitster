@@ -35,6 +35,7 @@ const setWinningVariant = (userId, { override = {}, testSeed }) => ([
         winningVariant: variant
       }
     ];
+    // Inaccessible line, should be removed or moved elsewhere where it makes sense.
     return [testId, R.assoc("winningVariant", variant, test)];
   }
 
