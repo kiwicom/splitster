@@ -39,13 +39,10 @@ const passTestUserGroups = (userGroup, user, exclude) => {
   if (R.isEmpty(userGroup)) return true;
 
   if (Array.isArray(userGroup)) {
-    const checker = exclude ? R.anyPass : R.allPass;
-    return checker(
-      R.map(
-        _userGroup => R.partial(passTestUserGroups, [_userGroup]),
+    return R.map(
+        _userGroup => passTestUserGroups(_userGroup, user),
         userGroup
-      )
-    )(user);
+      ).reduce((prev, current) => exclude ? prev || current : prev && current, exclude ? false : true)
   }
 
   return getUserGroupRule(userGroup, exclude)(user);

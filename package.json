@@ -47,6 +47,8 @@
     "flow-bin": "^0.87.0",
     "immutable-devtools": "0.0.7",
     "jest": "^23.6.0",
+    "js-cookie": "2.2.1",
+    "ramda": "0.27.1",
     "rimraf": "^2.6.3",
     "webpack": "^3.0.0"
   },
