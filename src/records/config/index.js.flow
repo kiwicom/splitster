@@ -13,7 +13,6 @@ export type CookiesConfig = {|
 |};
 
 export type OptionsConfig = {|
-  // separateTest?: boolean, // @deprecated
   cookies?: CookiesConfig
 |};
 
