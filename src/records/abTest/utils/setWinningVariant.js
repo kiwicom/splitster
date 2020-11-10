@@ -2,7 +2,47 @@ import * as R from "ramda";
 
 import seedRandom from "seedrandom";
 
-const getSeedNumber = key => seedRandom(key)();
+/**
+ * For a given key, this function will always return the same number between 0 and 1
+ *
+ * This is because seedrandom predictably returns a pseudorandom array of numbers,
+ * and each call to the resulting seeded function essentially shows the next item.
+ * ```javascript
+ * const myRandomNumberGenerator = seedrandom('lorem ipsum');
+ * myRandomNumberGenerator() // the first call to this function will always return 0.7294600864927929
+ * myRandomNumberGenerator() // the second call will always return 0.7759380950703769
+ * myRandomNumberGenerator() // the third call will always return 0.26805867284752677
+ * ```
+ */
+export const getSeedNumber = key => seedRandom(key)();
+
+/**
+ *
+ * To select the winning variant, we need to:
+ * - pick a random number between 0 and 1,
+ * - scale it to being between 0 and the sum of the probability weights (aka variant ratio)
+ * - determine where it lies
+ *
+ *
+ * For example, if we have variants
+ * - A with weight 1,
+ * - B with weight 3,
+ * - C with weight 6,
+ *
+ * and we have a random number ⍺ between 0 and 1, we need to multiply ⍺ by the sum
+ * of the weights, i.e. 10 = 1 + 3 + 6, to obtain the location of which item to pick,
+ * in the following intervals:
+ *
+ * 0     1               4                              10
+ * |--A--|------B--------|--------------C---------------|
+ *
+ * In particular, we choose to divide the interval [0,10] from smaller weight to bigger weight.
+ *
+ * If ⍺ = 0.05, 10 * ⍺ = 0.5, so we feel into A's interval, and the winning variant is A
+ * If ⍺ = 0.1, 10 * ⍺ = 1, so we feel into B's interval, and the winning variant is B
+ * If ⍺ = 0.2, 10 * ⍺ = 2, so we feel into B's interval again, and the winning variant is B
+ * If ⍺ = 0.5, 10 * ⍺ = 5, so we feel into C's interval again, and the winning variant is C
+ */
 
 export const getWinningVariant = (variants, defaultVariant, seedNumber) => {
   const ratioSum = R.sum(
