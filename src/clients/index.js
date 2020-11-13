@@ -23,7 +23,6 @@ export class SplitsterClient {
       this.tests = copy.tests
       this.options = copy.options
       this.user = copy.user
-      this.results = copy.results
       return
     }
 
