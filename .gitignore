@@ -5,3 +5,4 @@ npm-debug.log
 .yalc
 yalc.lock
 lib/
+coverage
