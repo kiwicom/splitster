@@ -13,7 +13,6 @@ export class SplitsterClient {
     if (!config && !user && !userId && copy) {
       // Create new one from copy
       this.tests = copy.tests
-      this.options = copy.options
       this.user = copy.user
       return
     }
@@ -23,9 +22,6 @@ export class SplitsterClient {
     // Set user
     this.user = user
     this.userId = userId
-    // Set options
-    this.options = config.options
-
     this.tests = getTestsFromConfig(config.tests, { override, user, userId })
   }
 
