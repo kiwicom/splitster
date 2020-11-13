@@ -9,14 +9,6 @@ import jsCookies from "js-cookie"
  * containing all the common methods
  */
 export class SplitsterClient {
-  // Config
-  tests = {}
-  options = {}
-
-  // Live data
-  user = ""
-  userId = ""
-
   constructor({ config, user, userId, override = {} }, copy) {
     if (!config && !user && !userId && copy) {
       // Create new one from copy
