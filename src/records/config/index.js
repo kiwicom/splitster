@@ -2,13 +2,6 @@ import * as R from "ramda";
 
 export const defaultConfig = {
   tests: {},
-  options: {
-    cookies: {
-      disabled: false,
-      expiration: 30, // TODO: check if it is alright
-      name: "splitster"
-    }
-  }
 };
 
 export const defaultTestConfig = {

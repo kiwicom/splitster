@@ -1,12 +1,9 @@
 import jsCookie from 'js-cookie';
 import * as R from 'ramda';
 import initClient, { SplitsterClient } from '.';
-import * as seedrandom from 'seedrandom'
 import { BASIC_CONFIG, BASIC_CONFIG_WITH_DISABLED_WITH_REASON,BASIC_CONFIG_WITH_DISABLED_WITH_DEFAULT_VARIANT_WITH_VERSION, BASIC_CONFIG_WITH_DISABLED_WITH_DEFAULT_VARIANT, BASIC_CONFIG_WITH_VERSION } from './__fixtures__/basic-config'
 import { EMPTY_CONFIG } from './__fixtures__/empty-config'
 import { EMPTY_TESTS_CONFIG } from './__fixtures__/empty-tests-config'
-import { CONFIG_WITH_OPTIONS } from './__fixtures__/empty-tests-empty-options-config'
-import { CONFIG_WITH_COOKIES_ENABLED, CONFIG_WITH_COOKIES_DISABLED } from './__fixtures__/empty-tests-options-config'
 
 const mockSeedRandom = jest.fn()
 // This is to ensure we can predictably set the winning variants
@@ -22,9 +19,6 @@ describe('SplitsterClient', () => {
         EMPTY_CONFIG.config,
         EMPTY_TESTS_CONFIG.config,
         BASIC_CONFIG.config,
-        CONFIG_WITH_OPTIONS.config,
-        CONFIG_WITH_COOKIES_ENABLED.config,
-        CONFIG_WITH_COOKIES_DISABLED.config
       ];
       const USER_CONFIGS = [ {}, { lang: 'en' } ];
       const USER_IDs = [ null, '', 'some-random-id' ];
