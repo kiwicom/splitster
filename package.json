@@ -57,7 +57,7 @@
     "ramda": ">= 0.26.1"
   },
   "dependencies": {
-    "random-js": "^1.0.8",
+    "random-js": "^2.1.0",
     "seedrandom": "^2.4.4"
   }
 }
