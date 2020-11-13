@@ -26,20 +26,6 @@ export class SplitsterClient {
       return
     }
 
-    // This block seems to never be executed:
-    // - if it's initialised from a copy, the return statement above stops the execution;
-    // - if it's not a copy, this.options is initialised as {} above, so the try/catch
-    //   will always result in an error.
-    try {
-      if (
-        !this.options.cookies.disabled &&
-        !jsCookies.get("user_id_splitster")
-      ) {
-        // Save user_id to cookies
-        jsCookies.set("user_id_splitster", this.userId)
-      }
-    } catch (err) {}
-
     // Initialize splitster
 
     // Set user
