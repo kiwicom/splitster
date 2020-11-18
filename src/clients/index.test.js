@@ -1,36 +1,126 @@
 import jsCookie from 'js-cookie';
 import * as R from 'ramda';
 import initClient, { SplitsterClient } from '.';
-import * as seedrandom from 'seedrandom'
-import { BASIC_CONFIG, BASIC_CONFIG_WITH_DISABLED_WITH_REASON,BASIC_CONFIG_WITH_DISABLED_WITH_DEFAULT_VARIANT_WITH_VERSION, BASIC_CONFIG_WITH_DISABLED_WITH_DEFAULT_VARIANT, BASIC_CONFIG_WITH_VERSION } from './__fixtures__/basic-config'
-import { EMPTY_CONFIG } from './__fixtures__/empty-config'
-import { EMPTY_TESTS_CONFIG } from './__fixtures__/empty-tests-config'
-import { CONFIG_WITH_OPTIONS } from './__fixtures__/empty-tests-empty-options-config'
-import { CONFIG_WITH_COOKIES_ENABLED, CONFIG_WITH_COOKIES_DISABLED } from './__fixtures__/empty-tests-options-config'
+import {
+  BASIC_CONFIG,
+  BASIC_CONFIG_WITH_DISABLED_WITH_REASON,
+  BASIC_CONFIG_WITH_DISABLED_WITH_DEFAULT_VARIANT_WITH_VERSION,
+  BASIC_CONFIG_WITH_DISABLED_WITH_DEFAULT_VARIANT,
+  BASIC_CONFIG_WITH_VERSION
+} from './__fixtures__/basic-config';
+import { EMPTY_CONFIG } from './__fixtures__/empty-config';
+import { EMPTY_TESTS_CONFIG } from './__fixtures__/empty-tests-config';
 
-const mockSeedRandom = jest.fn()
+const mockSeedRandom = jest.fn();
 // This is to ensure we can predictably set the winning variants
 jest.mock('seedrandom', () => {
-  return jest.fn().mockImplementation((key) => mockSeedRandom(key))
+  return jest.fn().mockImplementation((key) => mockSeedRandom(key));
+});
+
+afterEach(() => {
+  mockSeedRandom.mockRestore();
+});
+
+describe('initClient', () => {
+  it('should initialise a new SplitsterClient', () => {
+    mockSeedRandom.mockImplementation(
+      EMPTY_TESTS_CONFIG.mockSeedRandomImplementation
+    );
+    const client = initClient(EMPTY_TESTS_CONFIG.config);
+    expect(client).toBeInstanceOf(SplitsterClient);
+  });
+
+  it('should set default values', () => {
+    mockSeedRandom.mockImplementation(
+      EMPTY_TESTS_CONFIG.mockSeedRandomImplementation
+    );
+    const client = initClient(EMPTY_TESTS_CONFIG.config);
+    expect(client.tests).toEqual(EMPTY_TESTS_CONFIG.config.tests);
+    expect(client.tests).toEqual(EMPTY_TESTS_CONFIG.config.tests);
+  });
+
+  test('user groups are taken into account (with default value as fallback)', () => {
+    const tests = {
+      banner: {
+        defaultVariant: 'hidden',
+        variants: {
+          hidden: 1,
+          visible: 0
+        },
+        description: 'New banner showing promotional information'
+      },
+      coolFeature: {
+        defaultVariant: 'off',
+        variants: {
+          on: 1,
+          off: 1
+        },
+        description: 'Cool new feature that will blow your mind!',
+        userGroup: {
+          lang: [ 'en', 'fr' ]
+        }
+      }
+    };
+    const englishUser = {
+      lang: 'en'
+    };
+    const frenchUser = {
+      lang: 'fr'
+    };
+    const czechUser = {
+      lang: 'cz'
+    };
+    mockSeedRandom.mockImplementation((key) => {
+      if (key === 'banner_0:some-unique-identifier-for-this-english-user') return () => 0.3;
+      if (key === 'coolFeature_0:some-unique-identifier-for-this-english-user') return () => 0.3;
+      if (key === 'banner_0:some-unique-identifier-for-this-french-user') return () => 0.3;
+      if (key === 'coolFeature_0:some-unique-identifier-for-this-french-user') return () => 0.7;
+      if (key === 'banner_0:some-unique-identifier-for-this-czech-user') return () => 0.3;
+      if (key === 'coolFeature_0:some-unique-identifier-for-this-czech-user') return () => 0.3;
+      return () => null;
+    });
+    const EnglishSplitsterClient = initClient(
+      { tests },
+      englishUser,
+      'some-unique-identifier-for-this-english-user'
+    );
+    const FrenchSplitsterClient = initClient(
+      { tests },
+      frenchUser,
+      'some-unique-identifier-for-this-french-user'
+    );
+    const CzechSplitsterClient = initClient(
+      { tests },
+      czechUser,
+      'some-unique-identifier-for-this-czech-user'
+    );
+
+    expect(EnglishSplitsterClient.get('banner').value).toEqual('hidden');
+    expect(EnglishSplitsterClient.get('coolFeature').value).toEqual('on');
+
+    expect(FrenchSplitsterClient.get('banner').value).toEqual('hidden');
+    expect(FrenchSplitsterClient.get('coolFeature').value).toEqual('off');
+
+    expect(CzechSplitsterClient.get('banner').value).toEqual('hidden');
+    // Test is not applicable so it defaults to default value
+    expect(CzechSplitsterClient.get('coolFeature').value).toEqual('off');
+  });
 });
 
 describe('SplitsterClient', () => {
-
   describe('constructor', () => {
     it('initialises values', () => {
       const CONFIGS = [
-        EMPTY_CONFIG.config,
-        EMPTY_TESTS_CONFIG.config,
-        BASIC_CONFIG.config,
-        CONFIG_WITH_OPTIONS.config,
-        CONFIG_WITH_COOKIES_ENABLED.config,
-        CONFIG_WITH_COOKIES_DISABLED.config
+        EMPTY_CONFIG,
+        EMPTY_TESTS_CONFIG,
+        BASIC_CONFIG,
       ];
       const USER_CONFIGS = [ {}, { lang: 'en' } ];
       const USER_IDs = [ null, '', 'some-random-id' ];
-      CONFIGS.forEach((config) => {
+      CONFIGS.forEach(({ config, mockSeedRandomImplementation }) => {
         USER_CONFIGS.forEach((userConfig) => {
           USER_IDs.forEach((userId) => {
+            mockSeedRandom.mockImplementation(mockSeedRandomImplementation);
             const client = new SplitsterClient({
               config,
               user: userConfig,
@@ -67,9 +157,10 @@ describe('SplitsterClient', () => {
         configured tests`, () => {
       const spy = jest.spyOn(global.console, 'warn').mockImplementation();
 
-      const clientWithNoTests = initClient({
-        tests: {}
-      });
+      mockSeedRandom.mockImplementation(
+        EMPTY_TESTS_CONFIG.mockSeedRandomImplementation
+      );
+      const clientWithNoTests = initClient(EMPTY_TESTS_CONFIG.config);
       expect(clientWithNoTests.get()).toEqual({ value: null });
       expect(spy).toHaveBeenCalledWith(
         'Splitster: Trying to access not existing test: undefined, your value will be null.'
@@ -80,6 +171,9 @@ describe('SplitsterClient', () => {
         'Splitster: Trying to access not existing test: some-test-id, your value will be null.'
       );
 
+      mockSeedRandom.mockImplementation(
+        BASIC_CONFIG.mockSeedRandomImplementation
+      );
       const clientWithSomeTests = initClient(BASIC_CONFIG.config);
       expect(clientWithSomeTests.get('banner')).not.toEqual({ value: null });
       expect(clientWithSomeTests.get('some-unknown-test-id')).toEqual({
@@ -92,7 +186,9 @@ describe('SplitsterClient', () => {
     });
 
     it(`should return an object with key "value" and value the winning variant`, () => {
-      mockSeedRandom.mockImplementation(BASIC_CONFIG.mockSeedRandomImplementation);
+      mockSeedRandom.mockImplementation(
+        BASIC_CONFIG.mockSeedRandomImplementation
+      );
       const clientWithSomeTests = initClient(BASIC_CONFIG.config);
       expect(clientWithSomeTests.get('banner')).toEqual({
         value: 'winningVariant'
@@ -126,7 +222,9 @@ describe('SplitsterClient', () => {
       });
     });
     it('returns a new instance of the client with updated winning variant for the given testId', () => {
-      mockSeedRandom.mockImplementation(BASIC_CONFIG.mockSeedRandomImplementation);
+      mockSeedRandom.mockImplementation(
+        BASIC_CONFIG.mockSeedRandomImplementation
+      );
 
       const client = initClient(BASIC_CONFIG.config);
       expect(client.get('banner')).toEqual({
@@ -142,11 +240,12 @@ describe('SplitsterClient', () => {
       expect(modifiedClient.get('loginButton')).toEqual({
         value: 'winningVariant'
       });
-
     });
     it('returns a new instance of the client with updated winning variant for the given testId, even if testId is not present in original client configuration object', () => {
       const spy = jest.spyOn(global.console, 'warn').mockImplementation();
-      mockSeedRandom.mockImplementation(BASIC_CONFIG.mockSeedRandomImplementation);
+      mockSeedRandom.mockImplementation(
+        BASIC_CONFIG.mockSeedRandomImplementation
+      );
       const client = initClient(BASIC_CONFIG.config);
       expect(client.get('banner')).toEqual({
         value: 'winningVariant'
@@ -168,7 +267,9 @@ describe('SplitsterClient', () => {
       spy.mockRestore();
     });
     it('returns a new instance of the client with updated winning variant for the given testId, even if variantId is not present in the initial configuration object', () => {
-      mockSeedRandom.mockImplementation(BASIC_CONFIG.mockSeedRandomImplementation);
+      mockSeedRandom.mockImplementation(
+        BASIC_CONFIG.mockSeedRandomImplementation
+      );
       const client = initClient(BASIC_CONFIG.config);
       expect(client.get('banner')).toEqual({
         value: 'winningVariant'
@@ -188,6 +289,9 @@ describe('SplitsterClient', () => {
         set: jest.fn()
       }));
       const spy = jest.spyOn(jsCookie, 'set');
+      mockSeedRandom.mockImplementation(
+        BASIC_CONFIG.mockSeedRandomImplementation
+      );
 
       // TODO It does not work if the tests are {}
       const client = initClient(BASIC_CONFIG.config);
@@ -205,80 +309,88 @@ describe('SplitsterClient', () => {
 
   describe('getSaveResults', () => {
     it('should should return an empty object when no tests are provided', () => {
+      mockSeedRandom.mockImplementation(
+        EMPTY_TESTS_CONFIG.mockSeedRandomImplementation
+      );
       const client = initClient(EMPTY_TESTS_CONFIG.config);
       expect(client.getSaveResults()).toEqual({});
     });
     describe('should should return the winning variant id for each test', () => {
-      test("default", () => {
-        mockSeedRandom.mockImplementation(BASIC_CONFIG.mockSeedRandomImplementation)
+      test('default', () => {
+        mockSeedRandom.mockImplementation(
+          BASIC_CONFIG.mockSeedRandomImplementation
+        );
         const client = initClient(BASIC_CONFIG.config);
         expect(client.getSaveResults()).toEqual({
           banner: 'winningVariant',
           loginButton: 'winningVariant',
           homepage: 'winningVariant'
         });
-      })
-
-    test('or disabled reason (if provided) for each test', () => {
-      mockSeedRandom.mockImplementation(BASIC_CONFIG_WITH_DISABLED_WITH_REASON.mockSeedRandomImplementation)
-      const client = initClient(BASIC_CONFIG_WITH_DISABLED_WITH_REASON.config);
-      expect(client.getSaveResults()).toEqual({
-        banner: 'winningVariant',
-        loginButton: 'winningVariant',
-        homepage: '__disabled_because it is not ready yet'
-      });
-    });
-    test('or fallback disabled reason (if not provided) for each test', () => {
-      mockSeedRandom.mockImplementation(BASIC_CONFIG_WITH_DISABLED_WITH_DEFAULT_VARIANT.mockSeedRandomImplementation)
-      const client = initClient(BASIC_CONFIG_WITH_DISABLED_WITH_DEFAULT_VARIANT.config);
-      expect(client.getSaveResults()).toEqual({
-        banner: 'winningVariant',
-        loginButton: 'winningVariant',
-        homepage: '__disabled_config'
-      });
-    });
-    test('with the version in the testId if requested', () => {
-      mockSeedRandom.mockImplementation(BASIC_CONFIG_WITH_VERSION.mockSeedRandomImplementation)
-      const client = initClient(BASIC_CONFIG_WITH_VERSION.config);
-      expect(client.getSaveResults(true)).toEqual({
-        banner_0: 'winningVariant',
-        loginButton_5: 'superdupercool',
-        homepage_0: 'winningVariant'
-      });
-    });
-    test('with the default variant if the test is disabled, and noDisabled option is set to true', () => {
-      mockSeedRandom.mockImplementation(BASIC_CONFIG_WITH_DISABLED_WITH_DEFAULT_VARIANT.mockSeedRandomImplementation)
-      const client = initClient(BASIC_CONFIG_WITH_DISABLED_WITH_DEFAULT_VARIANT.config);
-      expect(client.getSaveResults(false, true)).toEqual({
-        banner: 'winningVariant',
-        loginButton: 'winningVariant',
-        homepage: 'default'
       });
 
-    });
-    test('with the version in the testId and disabled tests', () => {
-      mockSeedRandom.mockImplementation(BASIC_CONFIG_WITH_DISABLED_WITH_DEFAULT_VARIANT_WITH_VERSION.mockSeedRandomImplementation);
-      const client = initClient(BASIC_CONFIG_WITH_DISABLED_WITH_DEFAULT_VARIANT_WITH_VERSION.config);
-      expect(client.getSaveResults(true, true)).toEqual({
-        loginButton_5: 'default',
-        banner_0: 'winningVariant',
-        homepage_0: 'winningVariant'
+      test('or disabled reason (if provided) for each test', () => {
+        mockSeedRandom.mockImplementation(
+          BASIC_CONFIG_WITH_DISABLED_WITH_REASON.mockSeedRandomImplementation
+        );
+        const client = initClient(
+          BASIC_CONFIG_WITH_DISABLED_WITH_REASON.config
+        );
+        expect(client.getSaveResults()).toEqual({
+          banner: 'winningVariant',
+          loginButton: 'winningVariant',
+          homepage: '__disabled_because it is not ready yet'
+        });
+      });
+      test('or fallback disabled reason (if not provided) for each test', () => {
+        mockSeedRandom.mockImplementation(
+          BASIC_CONFIG_WITH_DISABLED_WITH_DEFAULT_VARIANT.mockSeedRandomImplementation
+        );
+        const client = initClient(
+          BASIC_CONFIG_WITH_DISABLED_WITH_DEFAULT_VARIANT.config
+        );
+        expect(client.getSaveResults()).toEqual({
+          banner: 'winningVariant',
+          loginButton: 'winningVariant',
+          homepage: '__disabled_config'
+        });
+      });
+      test('with the version in the testId if requested', () => {
+        mockSeedRandom.mockImplementation(
+          BASIC_CONFIG_WITH_VERSION.mockSeedRandomImplementation
+        );
+        const client = initClient(BASIC_CONFIG_WITH_VERSION.config);
+        expect(client.getSaveResults(true)).toEqual({
+          banner_0: 'winningVariant',
+          loginButton_5: 'superdupercool',
+          homepage_0: 'winningVariant'
+        });
+      });
+      test('with the default variant if the test is disabled, and noDisabled option is set to true', () => {
+        mockSeedRandom.mockImplementation(
+          BASIC_CONFIG_WITH_DISABLED_WITH_DEFAULT_VARIANT.mockSeedRandomImplementation
+        );
+        const client = initClient(
+          BASIC_CONFIG_WITH_DISABLED_WITH_DEFAULT_VARIANT.config
+        );
+        expect(client.getSaveResults(false, true)).toEqual({
+          banner: 'winningVariant',
+          loginButton: 'winningVariant',
+          homepage: 'default'
+        });
+      });
+      test('with the version in the testId and disabled tests', () => {
+        mockSeedRandom.mockImplementation(
+          BASIC_CONFIG_WITH_DISABLED_WITH_DEFAULT_VARIANT_WITH_VERSION.mockSeedRandomImplementation
+        );
+        const client = initClient(
+          BASIC_CONFIG_WITH_DISABLED_WITH_DEFAULT_VARIANT_WITH_VERSION.config
+        );
+        expect(client.getSaveResults(true, true)).toEqual({
+          loginButton_5: 'default',
+          banner_0: 'winningVariant',
+          homepage_0: 'winningVariant'
+        });
       });
     });
-  });
-  });
-});
-
-describe('initClient', () => {
-  mockSeedRandom.mockImplementation(EMPTY_TESTS_CONFIG.mockSeedRandomImplementation);
-  it('should initialise a new SplitsterClient', () => {
-    const client = initClient(EMPTY_TESTS_CONFIG.config);
-    expect(client).toBeInstanceOf(SplitsterClient);
-  });
-
-  it('should set default values', () => {
-    const client = initClient(EMPTY_TESTS_CONFIG.config);
-    expect(client.tests).toEqual(EMPTY_TESTS_CONFIG.config.tests);
-    expect(client.tests).toEqual(EMPTY_TESTS_CONFIG.config.tests);
   });
 });
