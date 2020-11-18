@@ -13,28 +13,28 @@ export const defaultTestConfig = {
   variants: {},
   disabled: false,
   disabledReason: null,
-  version: 0
+  version: 0,
 };
 
 export const mapVariants = R.mapObjIndexed((variant, key) => {
   if (R.is(Number, variant)) {
     return {
       value: key,
-      ratio: variant
+      ratio: variant,
     };
   }
   return variant;
 });
 
 export const mergeTestConfig = R.compose(
-  test => R.assoc("variants", mapVariants(test.variants), test),
-  R.mergeDeepRight(defaultTestConfig)
+  (test) => R.assoc("variants", mapVariants(test.variants), test),
+  R.mergeDeepRight(defaultTestConfig),
 );
 
-export const mergeDefaultConfig = config => {
+export const mergeDefaultConfig = (config) => {
   const merged = R.compose(
-    c => R.assoc("tests", R.map(mergeTestConfig, config.tests), c),
-    R.mergeDeepRight(defaultConfig)
+    (c) => R.assoc("tests", R.map(mergeTestConfig, config.tests), c),
+    R.mergeDeepRight(defaultConfig),
   )(config);
   return merged;
 };

@@ -23,8 +23,7 @@ export const filterCookiesByPrefix = (cookies, prefix = "splitster_") =>
  */
 export const parseCookies = (cookies, prefix = "splitster_") =>
   R.reduce(
-    (acc, key) =>
-      R.assoc(R.slice(prefix.length, key.length, key), cookies[key], acc),
+    (acc, key) => R.assoc(R.slice(prefix.length, key.length, key), cookies[key], acc),
     {},
-    filterCookiesByPrefix(cookies, prefix)
+    filterCookiesByPrefix(cookies, prefix),
   );

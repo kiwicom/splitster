@@ -44,3 +44,6 @@ jobs:
     - name: flow
       run: yarn flow
 
+    - name: lint
+      run: yarn lint
+

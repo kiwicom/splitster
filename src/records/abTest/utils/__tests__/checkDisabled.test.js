@@ -2,7 +2,7 @@ import checkDisabled, { REASONS } from "../checkDisabled";
 
 const enabled = {
   disabled: false,
-  disabledReason: null
+  disabledReason: null,
 };
 
 describe("checkDisabled", () => {
@@ -12,11 +12,11 @@ describe("checkDisabled", () => {
   it("should return enabled for not disabled test", () => {
     expect(checkDisabled("completely_fine")).toEqual(enabled);
   });
-  REASONS.forEach(reason => {
+  REASONS.forEach((reason) => {
     it(`should return disabled with proper reason: ${reason}`, () => {
       expect(checkDisabled(`__disabled_${reason}`)).toEqual({
         disabled: true,
-        disabledReason: reason
+        disabledReason: reason,
       });
     });
   });
@@ -25,7 +25,7 @@ describe("checkDisabled", () => {
   it("should return config if reason is set as null", () => {
     expect(checkDisabled("__disabled_null")).toEqual({
       disabled: true,
-      disabledReason: "config"
+      disabledReason: "config",
     });
   });
 });

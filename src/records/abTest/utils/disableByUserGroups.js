@@ -3,8 +3,7 @@ import * as R from "ramda";
 import testOverridePersistance from "./testOverridePersistance";
 import passTestUserGroups from "./passTestUserGroups";
 
-const getDisabledReason = exclude =>
-  exclude ? "user_group_exclude" : "user_group";
+const getDisabledReason = (exclude) => (exclude ? "user_group_exclude" : "user_group");
 
 const disableByUserGroups = (user, override, exclude = false) => {
   if (!user) return R.identity;
@@ -14,27 +13,18 @@ const disableByUserGroups = (user, override, exclude = false) => {
   return ([testId, test]) => {
     const userGroup = exclude ? test.userGroupExclude : test.userGroup;
 
-    if (
-      test.disabled ||
-      testOverridePersistance(testId, override) ||
-      R.isEmpty(userGroup)
-    ) {
+    if (test.disabled || testOverridePersistance(testId, override) || R.isEmpty(userGroup)) {
       return [testId, test];
     }
 
-    const disabledByUserGroups = checker(
-      passTestUserGroups(userGroup, user || {}, exclude)
-    );
+    const disabledByUserGroups = checker(passTestUserGroups(userGroup, user || {}, exclude));
 
     return [
       testId,
       R.compose(
-        R.assoc(
-          "disabledReason",
-          disabledByUserGroups ? getDisabledReason(exclude) : null
-        ),
-        R.assoc("disabled", disabledByUserGroups)
-      )(test)
+        R.assoc("disabledReason", disabledByUserGroups ? getDisabledReason(exclude) : null),
+        R.assoc("disabled", disabledByUserGroups),
+      )(test),
     ];
   };
 };

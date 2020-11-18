@@ -6,8 +6,8 @@ const disableByConfig = ([testId, test]) => {
       testId,
       R.merge(test, {
         disabled: true,
-        disabledReason: "config"
-      })
+        disabledReason: "config",
+      }),
     ];
   }
   return [testId, test];

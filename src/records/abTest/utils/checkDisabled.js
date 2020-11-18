@@ -6,37 +6,37 @@ export const REASONS = [
   "user_group",
   "user_group_exclude",
   "deadline",
-  "dev"
+  "dev",
 ];
 
 const DISABLED_REGEX = /^(__disabled_)(\w+)$/;
 
-const checkDisabled = override => {
+const checkDisabled = (override) => {
   if (!override) {
     return {
       disabled: false,
-      disabledReason: null
+      disabledReason: null,
     };
   }
-  const [_, disabled, reason] = R.match(DISABLED_REGEX, override);
+  const [, disabled, reason] = R.match(DISABLED_REGEX, override);
 
   if (Boolean(disabled) && R.contains(reason, REASONS)) {
     return {
       disabled: true,
       // TODO: temporary fix, remove 'null'
-      disabledReason: reason
+      disabledReason: reason,
     };
   }
   if (Boolean(disabled) && reason === "null") {
     return {
       disabled: true,
       // TODO: temporary fix, remove 'null'
-      disabledReason: "config"
+      disabledReason: "config",
     };
   }
   return {
     disabled: false,
-    disabledReason: null
+    disabledReason: null,
   };
 };
 

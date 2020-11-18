@@ -1,22 +1,23 @@
 // @flow strict
-import type { Tests } from "../records/abTest";
+
+// import type { Tests } from "../records/abTest";
 import type { Config, OptionsConfig } from "../records/config";
 
 export type VariantValue = {|
-  value: string
+  value: string,
 |};
 
-export type SplitsterResults = { [string]: string };
+export type SplitsterResults = { [string]: string, ... };
 
 export type ClientInput = {|
   config?: Config,
   user?: Object,
   userId?: string,
-  override?: SplitsterResults
+  override?: SplitsterResults,
 |};
 
 // export interface SplitsterClient {
-declare export class SplitsterClient {
+export interface SplitsterClient {
   options: OptionsConfig;
 
   user: string;
@@ -36,7 +37,7 @@ export type init = (
   config: Config,
   user: Object,
   userId: string,
-  override?: SplitsterResults
+  override?: SplitsterResults,
 ) => SplitsterClient;
 
 declare export default init;
