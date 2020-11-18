@@ -44,6 +44,9 @@ jobs:
     - name: flow
       run: yarn flow
 
+    - name: ts:check
+      run: yarn ts:check
+
     - name: lint
       run: yarn lint
 
