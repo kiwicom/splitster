@@ -13,7 +13,6 @@ export type CookiesConfig = {|
 |};
 
 export type OptionsConfig = {|
-  // separateTest?: boolean, // @deprecated
   cookies?: CookiesConfig
 |};
 
@@ -43,10 +42,6 @@ export type TestConfig = {|
   userGroup?: TestUserGroupConfig,
   userGroupExclude?: TestUserGroupConfig,
   usage?: number,
-  // deadline?: string | Date,
-  //   runTrack?: TestTracksConfig, // @deprecated
-  //   useTrack?: TestTracksConfig, // @deprecated
-  //   endTrack?: TestTracksConfig, // @deprecated
   defaultVariant: string,
   variants: VariantsConfig,
   disabled?: boolean,
@@ -58,7 +53,5 @@ export type TestsConfig = { [TestId]: TestConfig };
 
 export type Config = {|
   tests: TestsConfig,
-  // userGroups?: UserGroupsConfig, // @deprecated
-  // tracks?: TracksConfig, // @deprecated
   options?: OptionsConfig
 |};

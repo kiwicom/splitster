@@ -77,39 +77,7 @@ const tests = {
   },
 }
 ```
-### tracks
-Track may be string ID of object specified in general tracks section, or inline function taking result of test:
-```ecmascript 6
-[
-  GENERAL_TRACK_ID,
-  (res) => {},
-]
-```
-#### runTrack
-tracks used when experiment is ran - this happens only one per test life
-```ecmascript 6
-splitster.run(test_id) // Runs one experiment
-// OR
-splitster.runAll() // Runs all experiments
-```
-#### useTrack
-tracks used when experiment value is required. Runs only once.
-Useful to make sure user has really seen experiment in action
-```ecmascript 6
-const variant = splitster.get(test_id) //useTracks calling
-if (variant.value === 1) {
-  // Do stuff
-} else if (variant.value === 2) {
-  // Do other stuff
-}
-```
-#### endTrack
-final tracks when test is successful. May be called multiple times.
-```ecmascript 6
-document.getElementById("button").addEventListener("click", () => {
-  splitster.track(test_id) //endTracks calling
-})
-```
+
 ## userGroups
 Defines groups which user must satisfies if test can be started.
 ```ecmascript 6
@@ -146,10 +114,6 @@ tracks = {
 
 ## options
 Other options to set
-
-
-**separateTest:** if true, only one test is used at time. Test is chosen randomly.
-Useful when you don't want to pollute your results with too many tests running at the same time.
 
 ### cookies
 **disabled:** if true, tests will not be saved to cookies.
