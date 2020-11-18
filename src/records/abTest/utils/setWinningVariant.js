@@ -1,5 +1,4 @@
 import * as R from "ramda";
-
 import seedRandom from "seedrandom";
 
 /**
@@ -14,7 +13,7 @@ import seedRandom from "seedrandom";
  * myRandomNumberGenerator() // the third call will always return 0.26805867284752677
  * ```
  */
-export const getSeedNumber = key => seedRandom(key)();
+export const getSeedNumber = (key) => seedRandom(key)();
 
 /**
  *
@@ -45,24 +44,19 @@ export const getSeedNumber = key => seedRandom(key)();
  */
 
 export const getWinningVariant = (variants, defaultVariant, seedNumber) => {
-  const ratioSum = R.sum(
-    R.map(([variantId, variant]) => variant.ratio, variants)
-  );
+  const ratioSum = R.sum(R.map(([_variantId, variant]) => variant.ratio, variants));
 
   // Seed number (from interval [0, 1]) is interpolated to interval [0-ratio sum]
   let floater = seedNumber * ratioSum;
 
-  const winningVariant = R.find(([variantId, variant]) => {
+  const winningVariant = R.find(([_variantId, variant]) => {
     floater -= variant.ratio;
     return floater <= 0;
   }, variants);
   return winningVariant ? winningVariant[0] : defaultVariant;
 };
 
-const setWinningVariant = (userId, { override = {}, testSeed }) => ([
-  testId,
-  test
-]) => {
+const setWinningVariant = (userId, { override = {}, testSeed }) => ([testId, test]) => {
   const key = `${testId}_${test.version}`;
   if (override[key] && test.variants[override[key]]) {
     const variant = override[key];
@@ -72,8 +66,8 @@ const setWinningVariant = (userId, { override = {}, testSeed }) => ([
         ...test,
         disabled: false,
         disabledReason: null,
-        winningVariant: variant
-      }
+        winningVariant: variant,
+      },
     ];
     // Inaccessible line, should be removed or moved elsewhere where it makes sense.
     return [testId, R.assoc("winningVariant", variant, test)];
@@ -90,7 +84,7 @@ const setWinningVariant = (userId, { override = {}, testSeed }) => ([
   const winningVariant = getWinningVariant(
     R.toPairs(test.variants),
     test.defaultVariant,
-    seedNumber
+    seedNumber,
   );
   return [testId, R.assoc("winningVariant", winningVariant, test)];
 };

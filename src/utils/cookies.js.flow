@@ -1,12 +1,7 @@
 // @flow strict
+
 import type { SplitsterResults } from "../clients/index";
 
-export type filterCookiesByPrefix = (
-  cookies: SplitsterResults,
-  prefix?: string
-) => string[];
+export type filterCookiesByPrefix = (cookies: SplitsterResults, prefix?: string) => string[];
 
-export type parseCookies = (
-  cookies: SplitsterResults,
-  perfix?: string
-) => SplitsterResults;
+export type parseCookies = (cookies: SplitsterResults, perfix?: string) => SplitsterResults;

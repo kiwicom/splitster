@@ -3,7 +3,7 @@ import testOverridePersistance from "../testOverridePersistance";
 const override = {
   TEST_1: "setProperly",
   TEST_2: "__disabled_config",
-  TEST_3: "__disabled_null"
+  TEST_3: "__disabled_null",
 };
 
 describe("#testOverridePersistance", () => {

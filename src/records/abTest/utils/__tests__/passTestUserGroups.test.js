@@ -4,19 +4,19 @@ import passTestUserGroups, { getUserGroupRule } from "../passTestUserGroups";
 
 const tautology = jest.fn(() => true);
 
-const contradiction = jest.fn(arg => false);
+const contradiction = jest.fn(() => false);
 
 const groupConfig = {
   lang: ["en", "us", "sk"],
-  browser: "chrome"
+  browser: "chrome",
 };
 const groupConfigWithTautology = {
   ...groupConfig,
-  tautology
+  tautology,
 };
 const groupConfigWithContradiction = {
   ...groupConfig,
-  contradiction
+  contradiction,
 };
 
 describe("passTestUserGroups", () => {
@@ -26,15 +26,11 @@ describe("passTestUserGroups", () => {
     });
 
     it("should return true for tautology subconfig", () => {
-      const rule = getUserGroupRule(
-        R.pick(["tautology"], groupConfigWithTautology)
-      );
+      const rule = getUserGroupRule(R.pick(["tautology"], groupConfigWithTautology));
       expect(rule({})).toBe(true);
     });
     it("should return false for contradiction subconfig", () => {
-      const rule = getUserGroupRule(
-        R.pick(["contradiction"], groupConfigWithContradiction)
-      );
+      const rule = getUserGroupRule(R.pick(["contradiction"], groupConfigWithContradiction));
       expect(rule({})).toBe(false);
     });
 
@@ -65,90 +61,66 @@ describe("passTestUserGroups", () => {
   });
   describe("passTestUserGroups", () => {
     it("should create user group config and check user agains it", () => {
-      expect(
-        passTestUserGroups(groupConfig, { lang: "en", browser: "chrome" })
-      ).toBe(true);
-      expect(
-        passTestUserGroups(groupConfig, { lang: "cz", browser: "chrome" })
-      ).toBe(false);
-      expect(
-        passTestUserGroups(groupConfig, { lang: "en", browser: "safari" })
-      ).toBe(false);
-      expect(
-        passTestUserGroups(groupConfig, { lang: "cz", browser: "safari" })
-      ).toBe(false);
+      expect(passTestUserGroups(groupConfig, { lang: "en", browser: "chrome" })).toBe(true);
+      expect(passTestUserGroups(groupConfig, { lang: "cz", browser: "chrome" })).toBe(false);
+      expect(passTestUserGroups(groupConfig, { lang: "en", browser: "safari" })).toBe(false);
+      expect(passTestUserGroups(groupConfig, { lang: "cz", browser: "safari" })).toBe(false);
     });
     it("should create user group config and check user agains it - exclude", () => {
-      expect(
-        passTestUserGroups(groupConfig, { lang: "en", browser: "chrome" }, true)
-      ).toBe(true);
-      expect(
-        passTestUserGroups(groupConfig, { lang: "cz", browser: "chrome" }, true)
-      ).toBe(true);
-      expect(
-        passTestUserGroups(groupConfig, { lang: "en", browser: "safari" }, true)
-      ).toBe(true);
-      expect(
-        passTestUserGroups(groupConfig, { lang: "cz", browser: "safari" }, true)
-      ).toBe(false);
+      expect(passTestUserGroups(groupConfig, { lang: "en", browser: "chrome" }, true)).toBe(true);
+      expect(passTestUserGroups(groupConfig, { lang: "cz", browser: "chrome" }, true)).toBe(true);
+      expect(passTestUserGroups(groupConfig, { lang: "en", browser: "safari" }, true)).toBe(true);
+      expect(passTestUserGroups(groupConfig, { lang: "cz", browser: "safari" }, true)).toBe(false);
     });
 
     const groupConfigArray = [
       {
         lang: ["en", "us", "sk"],
-        browser: "chrome"
+        browser: "chrome",
       },
       {
         lang: "en",
-        browser: "chrome"
+        browser: "chrome",
       },
-    ]
+    ];
 
-    it("should create user group config and check user agains it", () => {
-      expect(
-        passTestUserGroups(groupConfigArray, { lang: "en", browser: "chrome" })
-      ).toBe(true);
-      expect(
-        passTestUserGroups(groupConfigArray, { lang: "cz", browser: "chrome" })
-      ).toBe(false);
-      expect(
-        passTestUserGroups(groupConfigArray, { lang: "en", browser: "safari" })
-      ).toBe(false);
-      expect(
-        passTestUserGroups(groupConfigArray, { lang: "cz", browser: "safari" })
-      ).toBe(false);
+    it("should create user group config and check user agains it - array version", () => {
+      expect(passTestUserGroups(groupConfigArray, { lang: "en", browser: "chrome" })).toBe(true);
+      expect(passTestUserGroups(groupConfigArray, { lang: "cz", browser: "chrome" })).toBe(false);
+      expect(passTestUserGroups(groupConfigArray, { lang: "en", browser: "safari" })).toBe(false);
+      expect(passTestUserGroups(groupConfigArray, { lang: "cz", browser: "safari" })).toBe(false);
     });
 
     const groupConfigArrayExclude = [
       {
         lang: ["cz", "us", "sk"],
-        browser: "chrome"
+        browser: "chrome",
       },
       {
         lang: "en",
-        browser: "chrome"
+        browser: "chrome",
       },
       {
         lang: ["en", "cz"],
-        browser: "safari"
+        browser: "safari",
       },
-    ]
+    ];
 
-    it("should create user group config and check user agains it - exclude", () => {
+    it("should create user group config and check user agains it - exclude - array version", () => {
       expect(
-        passTestUserGroups(groupConfigArrayExclude, { lang: "en", browser: "chrome" }, true)
+        passTestUserGroups(groupConfigArrayExclude, { lang: "en", browser: "chrome" }, true),
       ).toBe(true);
       expect(
-        passTestUserGroups(groupConfigArrayExclude, { lang: "cz", browser: "chrome" }, true)
+        passTestUserGroups(groupConfigArrayExclude, { lang: "cz", browser: "chrome" }, true),
       ).toBe(true);
       expect(
-        passTestUserGroups(groupConfigArrayExclude, { lang: "en", browser: "safari" }, true)
+        passTestUserGroups(groupConfigArrayExclude, { lang: "en", browser: "safari" }, true),
       ).toBe(true);
       expect(
-        passTestUserGroups(groupConfigArrayExclude, { lang: "cz", browser: "safari" }, true)
+        passTestUserGroups(groupConfigArrayExclude, { lang: "cz", browser: "safari" }, true),
       ).toBe(true);
       expect(
-        passTestUserGroups(groupConfigArrayExclude, { lang: "sk", browser: "safari" }, true)
+        passTestUserGroups(groupConfigArrayExclude, { lang: "sk", browser: "safari" }, true),
       ).toBe(false);
     });
 
@@ -156,16 +128,16 @@ describe("passTestUserGroups", () => {
       expect(
         passTestUserGroups(tautology, {
           lang: "en",
-          browser: "chrome"
-        })
+          browser: "chrome",
+        }),
       ).toBe(true);
     });
     it("should not pass contradiction config", () => {
       expect(
         passTestUserGroups(contradiction, {
           lang: "en",
-          browser: "chrome"
-        })
+          browser: "chrome",
+        }),
       ).toBe(false);
     });
 
@@ -173,16 +145,16 @@ describe("passTestUserGroups", () => {
       expect(
         passTestUserGroups(groupConfigWithTautology, {
           lang: "en",
-          browser: "chrome"
-        })
+          browser: "chrome",
+        }),
       ).toBe(true);
     });
     it("should not pass contradiction subconfig", () => {
       expect(
         passTestUserGroups(groupConfigWithContradiction, {
           lang: "en",
-          browser: "chrome"
-        })
+          browser: "chrome",
+        }),
       ).toBe(false);
     });
   });

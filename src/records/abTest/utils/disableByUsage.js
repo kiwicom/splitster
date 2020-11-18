@@ -4,11 +4,7 @@ import { Random } from "random-js";
 import testOverridePersistance from "./testOverridePersistance";
 
 const disableByUsage = (override, testRandom) => ([testId, test]) => {
-  if (
-    test.disabled ||
-    testOverridePersistance(testId, override) ||
-    R.isNil(test.usage)
-  ) {
+  if (test.disabled || testOverridePersistance(testId, override) || R.isNil(test.usage)) {
     return [testId, test];
   }
 
@@ -18,8 +14,8 @@ const disableByUsage = (override, testRandom) => ([testId, test]) => {
       testId,
       R.merge(test, {
         disabled: true,
-        disabledReason: "usage"
-      })
+        disabledReason: "usage",
+      }),
     ];
   }
   return [testId, test];

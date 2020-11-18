@@ -23,12 +23,8 @@ export const getTestFromConfig = ({ override, user, userId }) =>
     // disableByDeadline,
     disableByConfig,
     disableByOverride(override),
-    disableByDev(override)
+    disableByDev(override),
   );
 
 export const getTestsFromConfig = (tests, opts) =>
-  R.compose(
-    R.fromPairs,
-    R.map(getTestFromConfig(opts)),
-    R.toPairs
-  )(tests);
+  R.compose(R.fromPairs, R.map(getTestFromConfig(opts)), R.toPairs)(tests);

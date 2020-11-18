@@ -1,5 +1,6 @@
 // @flow strict
-import type { TestId, TestConfig } from "../config";
+
+import type { TestId } from "../config";
 
 export type DisabledReason =
   | "usage"
@@ -17,10 +18,10 @@ export type DisabledReason =
 export type Variant = {|
   id: string,
   value: string,
-  ratio: number
+  ratio: number,
 |};
 
-export type Variants = { [string]: Variant };
+export type Variants = { [string]: Variant, ... };
 
 export type Test = {|
   id: string,
@@ -36,10 +37,10 @@ export type Test = {|
   disabled: boolean,
   disabledReason: ?DisabledReason,
 
-  used: boolean // TODO: why is this here?
+  used: boolean, // TODO: why is this here?
 |};
 
-export type Tests = { [TestId]: Test };
+export type Tests = { [TestId]: Test, ... };
 
 // export type constructTest = (
 //   id: string,
