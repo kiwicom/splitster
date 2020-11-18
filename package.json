@@ -55,6 +55,6 @@
   },
   "dependencies": {
     "random-js": "^2.1.0",
-    "seedrandom": "^2.4.4"
+    "seedrandom": "^3.0.5"
   }
 }
