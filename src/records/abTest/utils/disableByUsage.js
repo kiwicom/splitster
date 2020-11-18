@@ -1,5 +1,5 @@
 import * as R from "ramda";
-import Random from "random-js";
+import { Random } from "random-js";
 
 import testOverridePersistance from "./testOverridePersistance";
 
@@ -12,7 +12,7 @@ const disableByUsage = (override, testRandom) => ([testId, test]) => {
     return [testId, test];
   }
 
-  const rand = testRandom || Random.integer(0, 99)(Random.engines.nativeMath);
+  const rand = testRandom || new Random().integer(0, 99);
   if (rand >= test.usage) {
     return [
       testId,

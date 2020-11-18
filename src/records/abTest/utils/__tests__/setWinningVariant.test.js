@@ -1,8 +1,22 @@
 import * as R from 'ramda';
 
-import setWinningVariant, { getWinningVariant } from '../setWinningVariant';
+import setWinningVariant, { getSeedNumber, getWinningVariant } from '../setWinningVariant';
 
 describe('setWinningVariant', () => {
+  describe('getSeedNumber', () => {
+    /**
+     * NOTE
+     * There's no need to mock seedrandom library because it generates pseudo random
+     * numbers predictably: 1 seed creates a random sequence of numbers which will always
+     * stay in that order.
+     */
+
+    expect(getSeedNumber("text")).toEqual(0.6249876746073828);
+    expect(getSeedNumber("shared_prefix:some-user-id")).toEqual(0.9460367025947125);
+    expect(getSeedNumber("shared_prefix:some-different-user-id")).toEqual(0.8879574238959159);
+    expect(getSeedNumber("shared_prefix:wefnoi1-r9egrenwo9")).toEqual(0.6119172247266617);
+  })
+
   describe('getWinningVariant', () => {
     const variants = R.toPairs({
       x: { ratio: 1 },
