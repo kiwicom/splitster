@@ -9,46 +9,19 @@ import jsCookies from "js-cookie"
  * containing all the common methods
  */
 export class SplitsterClient {
-  // Config
-  tests = {}
-  options = {}
-
-  // Live data
-  user = ""
-  userId = ""
-
   constructor({ config, user, userId, override = {} }, copy) {
     if (!config && !user && !userId && copy) {
       // Create new one from copy
       this.tests = copy.tests
-      this.options = copy.options
       this.user = copy.user
-      this.results = copy.results
       return
     }
-
-    // This block seems to never be executed:
-    // - if it's initialised from a copy, the return statement above stops the execution;
-    // - if it's not a copy, this.options is initialised as {} above, so the try/catch
-    //   will always result in an error.
-    try {
-      if (
-        !this.options.cookies.disabled &&
-        !jsCookies.get("user_id_splitster")
-      ) {
-        // Save user_id to cookies
-        jsCookies.set("user_id_splitster", this.userId)
-      }
-    } catch (err) {}
 
     // Initialize splitster
 
     // Set user
     this.user = user
     this.userId = userId
-    // Set options
-    this.options = config.options
-
     this.tests = getTestsFromConfig(config.tests, { override, user, userId })
   }
 

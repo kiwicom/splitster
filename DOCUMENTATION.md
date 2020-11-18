@@ -39,7 +39,8 @@ const tests = {
   }
 }
 // The roles of user and userId will be explained below
-const SplitsterClient = init({ tests, user: {}, userId: '' });
+// Signature is init(config, user, userId)
+const SplitsterClient = init({ tests }, {}, '');
 
 // Somewhere else in your application
 
@@ -80,6 +81,73 @@ The previous example is not production ready for the simple reason that **everyo
 You need a way to identify your users to provide the same variants through Splitster. For example, we could use some UUID generator and assign it to our users through a cookie, if they don't already have a cookie with given value.
 
 We can now use this value for `userId` when initialising the Splitster client.
+
+### Running the experiments against a segment of users
+
+So far, the tests run for every user. Sometimes, you want to run the experiments against only a subset of your users, say for example only against English or French speaking users. This is where the `user` configuration option of the client comes into play.
+
+This option acts as a filter on the tests provided to the client, to select which tests should be active for this specific user. Let's see an example.
+
+Given the following tests
+```js
+const tests = {
+  // test id
+  banner: {
+    defaultVariant: 'hidden',
+    variants: {
+      hidden: 1,
+      visible: 0
+    },
+    description: 'New banner showing promotional information',
+  },
+  coolFeature: {
+    defaultVariant: 'off',
+    variants: {
+      on: 1,
+      off: 1,
+    },
+    description: 'Cool new feature that will blow your mind!',
+    userGroup: {
+      lang: ["en", "fr"] // means "en" or "fr"
+    }
+  }
+}
+```
+and given the following `user` configuration to initialize the Splitster client
+```js
+const user = {
+  lang: "en",
+}
+```
+all the tests above will be available from the Splitster client:
+```js
+const SplitsterClient = init({ tests }, user, "some-unique-identifier");
+
+// expect(SplitsterClient.get("banner").value).toEqual("hidden");
+const isBannerVisible = SplitsterClient.get("banner").value === "visible"; // false
+
+// Because the variants have ratios 1 and 1, there's a 50% chance of the winning variant being "on" or "off" (and it will always be "on" or "off" for this specific user id)
+const isCoolFeatureActive = SplitsterClient.get("coolFeature").value === "on"; // 50% chance of it being true or false, depending on the user id
+```
+
+However, if another user configuration is passed, say
+```js
+const user = {
+  lang: "cz",
+}
+```
+then only a subset of the tests will be applicable to that user:
+```js
+const SplitsterClient = init({ tests }, user, "some-unique-identifier");
+
+// expect(SplitsterClient.get("banner").value).toEqual("hidden");
+const isBannerVisible = SplitsterClient.get("banner").value === "visible"; // false
+
+// Because this test is not available (`lang` is neither `en` nor `fr`), Splitster will use the default variant, meaning that the cool feature is essentially turned off in this case
+// expect(SplitsterClient.get("coolFeature").value).toEqual("off");
+const isCoolFeatureActive = SplitsterClient.get("coolFeature").value === "on"; // false
+```
+
 
 <!-- 
 
