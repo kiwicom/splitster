@@ -57,7 +57,7 @@ export type TestConfiguration<U extends User = User, V extends Variants = Varian
   /**
    *  Default variant id
    */
-  defaultVariant: keyof V | null;
+  defaultVariant: string | null;
 
   /**
    * Variants of the test specified by id.
