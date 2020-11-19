@@ -8,7 +8,7 @@ const RANDOM_COOKIES = {
 };
 
 describe("filterCookiesByPrefix", () => {
-  it("should return cookies specific to Splitster", () => {
+  test("should return cookies specific to Splitster", () => {
     const SPLITSTER_COOKIES = {
       "splitster_test_show_widget=show": "value",
       "splitster_test_button_color=red": "value2",
@@ -18,10 +18,10 @@ describe("filterCookiesByPrefix", () => {
       ...SPLITSTER_COOKIES,
       ...RANDOM_COOKIES,
     };
-    expect(filterCookiesByPrefix(COOKIES)).toEqual(SPLITSTER_COOKIES_KEYS);
+    expect(filterCookiesByPrefix(COOKIES)).toStrictEqual(SPLITSTER_COOKIES_KEYS);
   });
 
-  it("should return cookies specific to Splitster -- CUSTOM PREFIX", () => {
+  test("should return cookies specific to Splitster -- CUSTOM PREFIX", () => {
     const prefix = "my great prefix";
     const SPLITSTER_COOKIES_WITH_CUSTOM_PREFIX = {
       [`${prefix}test_show_widget=show`]: "value",
@@ -34,14 +34,14 @@ describe("filterCookiesByPrefix", () => {
       ...SPLITSTER_COOKIES_WITH_CUSTOM_PREFIX,
       ...RANDOM_COOKIES,
     };
-    expect(filterCookiesByPrefix(COOKIES, prefix)).toEqual(
+    expect(filterCookiesByPrefix(COOKIES, prefix)).toStrictEqual(
       SPLITSTER_COOKIES_WITH_CUSTOM_PREFIX_KEYS,
     );
   });
 });
 
 describe("parseCookies", () => {
-  it("returns Splitster specific cookies with the prefix removed from the cookie key", () => {
+  test("returns Splitster specific cookies with the prefix removed from the cookie key", () => {
     const SPLITSTER_COOKIES = {
       "splitster_test_show_widget=show": "value",
       "splitster_test_button_color=red": "value2",
@@ -54,10 +54,10 @@ describe("parseCookies", () => {
       ...SPLITSTER_COOKIES,
       ...RANDOM_COOKIES,
     };
-    expect(parseCookies(COOKIES)).toEqual(SPLITSTER_COOKIES_WITHOUT_PREFIX);
+    expect(parseCookies(COOKIES)).toStrictEqual(SPLITSTER_COOKIES_WITHOUT_PREFIX);
   });
 
-  it("parses Splitster specific cookies with the prefix removed from the cookie key -- CUSTOM PREFIX", () => {
+  test("parses Splitster specific cookies with the prefix removed from the cookie key -- CUSTOM PREFIX", () => {
     const prefix = "my great prefix";
     const SPLITSTER_COOKIES_WITH_CUSTOM_PREFIX = {
       [`${prefix}test_show_widget=show`]: "value",
@@ -71,6 +71,6 @@ describe("parseCookies", () => {
       ...SPLITSTER_COOKIES_WITH_CUSTOM_PREFIX,
       ...RANDOM_COOKIES,
     };
-    expect(parseCookies(COOKIES, prefix)).toEqual(SPLITSTER_COOKIES_WITHOUT_PREFIX);
+    expect(parseCookies(COOKIES, prefix)).toStrictEqual(SPLITSTER_COOKIES_WITHOUT_PREFIX);
   });
 });

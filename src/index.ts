@@ -81,3 +81,7 @@ export type UserGroup<U extends User = User> = UserGroupRule<U> | UserGroupRule<
 export type SplitsterInitConfig<U extends User = User, V extends Variants = Variants> = {
   tests: Tests<U, V>;
 };
+
+// SplitsterClient
+
+export type SplitsterResults = Record<string, string>;

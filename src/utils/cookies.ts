@@ -1,5 +1,7 @@
 import R from "ramda";
 
+import type { SplitsterResults } from "..";
+
 /**
  * How cookies will be set
  *
@@ -12,16 +14,13 @@ import R from "ramda";
  * tracks will be in config
  * ... so basically tests are enough for now
  */
-export const filterCookiesByPrefix = (cookies, prefix = "splitster_") =>
+export const filterCookiesByPrefix = (cookies: SplitsterResults, prefix = "splitster_") =>
   R.filter(R.startsWith(prefix), R.keys(cookies));
 
 /**
  * Parse cookies with keys {prefix_test_id} to {test_id}
- * @param prefix
- * @param cookies
- * @returns {*}
  */
-export const parseCookies = (cookies, prefix = "splitster_") =>
+export const parseCookies = (cookies: SplitsterResults, prefix = "splitster_") =>
   R.reduce(
     (acc, key) => R.assoc(R.slice(prefix.length, key.length, key), cookies[key], acc),
     {},
