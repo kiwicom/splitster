@@ -5,8 +5,14 @@
   "main": "lib/index.js",
   "sideEffects": false,
   "scripts": {
-    "build": "babel src -d lib --ignore **/*.test.js",
-    "build:watch": "babel src -d lib --ignore **/*.test.js --watch",
+    "babel": "yarn babel:js && yarn babel:ts",
+    "babel:js": "babel src -d lib --ignore '**/*.test.js','**/__fixtures__'",
+    "babel:ts": "yarn babel:js --ignore '**/*.test.ts' --extensions '.ts'",
+    "types": "yarn types:flow && yarn types:ts",
+    "types:flow": "find src -name '*.js.flow' -exec sh -c 'cp \"$0\" \"${0/src/lib}\"' '{}' \\;",
+    "types:ts": "tsc --project tsconfig.types.json",
+    "prebuild": "rimraf lib",
+    "build": "yarn babel && yarn types",
     "test": "ALL_TESTS=true jest",
     "lint": "eslint --ext js,js.flow,ts src --quiet",
     "lint:fix": "yarn lint --fix",
@@ -14,7 +20,7 @@
     "flow": "flow",
     "flow:start": "flow start",
     "flow:stop": "flow stop",
-    "localsync": "rimraf lib && yarn build && yalc push"
+    "localsync": "yarn build && yalc push"
   },
   "repository": "git+https://github.com/kiwicom/splitster.git",
   "author": "Vladimír Jarabica",
@@ -25,7 +31,6 @@
   "homepage": "https://github.com/kiwicom/splitster#readme",
   "files": [
     "lib/**",
-    "src/**/*.js.flow",
     ".flowconfig"
   ],
   "devDependencies": {

@@ -1,4 +1,4 @@
-import R from "ramda";
+import * as R from "ramda";
 
 import type { SplitsterResults } from "..";
 
@@ -20,7 +20,7 @@ export const filterCookiesByPrefix = (cookies: SplitsterResults, prefix = "split
 /**
  * Parse cookies with keys {prefix_test_id} to {test_id}
  */
-export const parseCookies = (cookies: SplitsterResults, prefix = "splitster_") =>
+export const parseCookies = (cookies: SplitsterResults, prefix = "splitster_"): SplitsterResults =>
   R.reduce(
     (acc, key) => R.assoc(R.slice(prefix.length, key.length, key), cookies[key], acc),
     {},
