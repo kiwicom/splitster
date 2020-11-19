@@ -1,3 +1,8 @@
+// @ts-expect-error This is a JS file that hasn't been converted yet
+export { default as init } from "./clients";
+
+export { parseCookies } from "./utils/cookies";
+
 export type DisabledReason =
   | "usage"
   | "separate_test"
