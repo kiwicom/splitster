@@ -3,7 +3,7 @@ Javascript AB testing tool
 
 # Configuration
 ```ecmascript 6
-import splitsterInit from "splitster"
+import { init as initSplitster } from "@kiwicom/splitster";
 splitsterInit(config)
 ```
 Where config is an object with following structure:
