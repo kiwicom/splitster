@@ -7,16 +7,16 @@ const override = {
 };
 
 describe("#testOverridePersistance", () => {
-  it("should check properly set", () => {
+  test("should check properly set", () => {
     expect(testOverridePersistance("TEST_1", override)).toBe(true);
   });
-  it("should check unset", () => {
+  test("should check unset", () => {
     expect(testOverridePersistance("TEST_XY", override)).toBe(false);
   });
-  it("should check disabled config", () => {
+  test("should check disabled config", () => {
     expect(testOverridePersistance("TEST_2", override)).toBe(false);
   });
-  it("should check disabled null", () => {
+  test("should check disabled null", () => {
     expect(testOverridePersistance("TEST_3", override)).toBe(false);
   });
 });

@@ -5,7 +5,8 @@ import type {
   StandardVariantConfiguration,
   StandardVariants,
   TestConfiguration,
-  Tests,
+  TestConfigurationInput,
+  TestsInput,
   VariantConfiguration,
   Variants,
 } from "../..";
@@ -45,13 +46,17 @@ export const mapVariants: <V extends Variants = Variants>(
   };
 });
 
-export const mergeTestConfig = R.compose<TestConfiguration, TestConfiguration, TestConfiguration>(
+export const mergeTestConfig = R.compose<
+  TestConfigurationInput,
+  TestConfigurationInput,
+  TestConfiguration
+>(
   (test) => R.assoc("variants", mapVariants(test.variants), test),
   R.mergeDeepRight(defaultTestConfig),
 );
 
 export const mergeDefaultConfig = (config: SplitsterInitConfig) =>
   R.compose<SplitsterInitConfig, SplitsterInitConfig, SplitsterInitConfig>(
-    R.assoc("tests", R.map<Tests, Tests>(mergeTestConfig, config.tests)),
+    R.assoc("tests", R.map<TestsInput, TestsInput>(mergeTestConfig, config.tests)),
     R.mergeDeepRight(defaultConfig),
   )(config);

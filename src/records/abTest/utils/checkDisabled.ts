@@ -1,5 +1,7 @@
 import * as R from "ramda";
 
+import type { DisabledReason } from "../../..";
+
 export const REASONS = [
   "usage",
   "separate_test",
@@ -11,8 +13,10 @@ export const REASONS = [
 
 const DISABLED_REGEX = /^(__disabled_)(\w+)$/;
 
-const checkDisabled = (override) => {
-  if (!override) {
+const checkDisabled = (
+  override?: string | null,
+): { disabled: boolean; disabledReason: DisabledReason | null } => {
+  if (override == null) {
     return {
       disabled: false,
       disabledReason: null,
@@ -24,7 +28,7 @@ const checkDisabled = (override) => {
     return {
       disabled: true,
       // TODO: temporary fix, remove 'null'
-      disabledReason: reason,
+      disabledReason: reason as DisabledReason,
     };
   }
   if (Boolean(disabled) && reason === "null") {

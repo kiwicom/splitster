@@ -1,9 +1,13 @@
 import * as R from "ramda";
 
 import checkDisabled from "./checkDisabled";
+import type { OverrideObject, PairedTestIdConfig } from "./types";
 
-const disableByOverride = (override) => ([testId, test]) => {
-  if (test.disabled) {
+const disableByOverride = (override: OverrideObject) => ([
+  testId,
+  test,
+]: PairedTestIdConfig): PairedTestIdConfig => {
+  if (test.disabled != null && test.disabled) {
     return [testId, test];
   }
   return [
