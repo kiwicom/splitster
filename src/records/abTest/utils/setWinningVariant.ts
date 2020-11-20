@@ -1,6 +1,8 @@
 import * as R from "ramda";
 import seedRandom from "seedrandom";
 
+import type { OverrideObject, PairedStandardVariantIdConfig, PairedTestIdConfig } from "./types";
+
 /**
  * For a given key, this function will always return the same number between 0 and 1
  *
@@ -13,7 +15,7 @@ import seedRandom from "seedrandom";
  * myRandomNumberGenerator() // the third call will always return 0.26805867284752677
  * ```
  */
-export const getSeedNumber = (key) => seedRandom(key)();
+export const getSeedNumber = (key: string) => seedRandom(key)();
 
 /**
  *
@@ -43,7 +45,11 @@ export const getSeedNumber = (key) => seedRandom(key)();
  * If ⍺ = 0.5, 10 * ⍺ = 5, so we feel into C's interval again, and the winning variant is C
  */
 
-export const getWinningVariant = (variants, defaultVariant, seedNumber) => {
+export const getWinningVariant = (
+  variants: PairedStandardVariantIdConfig[],
+  defaultVariant: string | null,
+  seedNumber: number,
+) => {
   const ratioSum = R.sum(R.map(([_variantId, variant]) => variant.ratio, variants));
 
   // Seed number (from interval [0, 1]) is interpolated to interval [0-ratio sum]
@@ -56,7 +62,10 @@ export const getWinningVariant = (variants, defaultVariant, seedNumber) => {
   return winningVariant ? winningVariant[0] : defaultVariant;
 };
 
-const setWinningVariant = (userId, { override = {}, testSeed }) => ([testId, test]) => {
+const setWinningVariant = (
+  userId: string,
+  { override = {}, testSeed }: { override?: OverrideObject; testSeed?: number },
+) => ([testId, test]: PairedTestIdConfig): PairedTestIdConfig => {
   const key = `${testId}_${test.version}`;
   if (override[key] && test.variants[override[key]]) {
     const variant = override[key];

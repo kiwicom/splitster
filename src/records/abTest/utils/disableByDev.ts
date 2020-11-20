@@ -1,6 +1,13 @@
 import * as R from "ramda";
 
-const disableByDev = (override) => ([testId, test]) => {
+import type { PairedTestIdConfig } from "./types";
+
+type Override = Record<string, string>;
+
+const disableByDev = (override: Override) => ([
+  testId,
+  test,
+]: PairedTestIdConfig): PairedTestIdConfig => {
   if (override[testId] && override[testId] === "__disabled_dev") {
     return [
       testId,

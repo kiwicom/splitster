@@ -1,15 +1,23 @@
 import * as R from "ramda";
 
-export const getUserGroupRule = (userGroupSubConfig, exclude) => {
-  if (typeof userGroupSubConfig === "function") return userGroupSubConfig;
+import type { User, UserGroup } from "../../..";
+
+export const getUserGroupRule = (
+  userGroupSubConfig: UserGroup,
+  exclude = false,
+): ((user: User) => boolean) => {
+  if (typeof userGroupSubConfig === "function") {
+    return userGroupSubConfig;
+  }
   // { key: "string", key: ["string", "string"]}
   const rules = R.map(
-    (key) => (user) => {
-      if (typeof userGroupSubConfig[key] === "function") return userGroupSubConfig[key](user);
+    (key) => (user: User) => {
+      const rule = userGroupSubConfig[key];
+      if (typeof rule === "function") {
+        return rule(user);
+      }
 
-      const allowedValues = Array.isArray(userGroupSubConfig[key])
-        ? userGroupSubConfig[key]
-        : [userGroupSubConfig[key]];
+      const allowedValues = Array.isArray(rule) ? rule : [rule];
 
       return R.contains(R.prop(key, user), allowedValues);
     },
@@ -34,8 +42,10 @@ export const getUserGroupRule = (userGroupSubConfig, exclude) => {
 // export const checkUserToUserGroup = (user, userGroup) =>
 //   R.allPass(userGroup)(user);
 
-const passTestUserGroups = (userGroup, user, exclude) => {
-  if (R.isEmpty(userGroup)) return true;
+const passTestUserGroups = (userGroup: UserGroup, user: User, exclude = false): boolean => {
+  if (R.isEmpty(userGroup)) {
+    return true;
+  }
 
   if (Array.isArray(userGroup)) {
     return R.map((_userGroup) => passTestUserGroups(_userGroup, user), userGroup).reduce(
