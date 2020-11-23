@@ -134,7 +134,7 @@ describe("disableByUserGroups", () => {
       ]),
     ).toStrictEqual(["TEST_2", { ...TEST_2, ...disabledUserGroupExclude }]);
   });
-  test("should pass user group excklude", () => {
+  test("should pass user group exclude", () => {
     expect(
       disableByUserGroups(
         { lang: "cz", browser: "safari" },
